@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.node {
+  cursor: pointer;
+}
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+.node text {
+  font: 15px sans-serif;
+}
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+</style>
+<body>
+<!-- <script src="d3.min.js"></script>  -->
+<script src="https://d3js.org/d3.v3.min.js"></script>
+
+<script>
+var margin = {top: 10, right: 80, bottom: 10, left: 80},
+    width = 1000 - margin.right - margin.left,
+    height = 530 - margin.top - margin.bottom;
+var i = 0,
+    duration = 750,
+    root;
+var tree = d3.layout.tree()
+             .size([height, width]);
+var diagonal = d3.svg.diagonal()
+    .projection(function(d) { return [d.y, d.x]; });
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var flare={"name":["数据维度"],"children":[{"name":["酒店自有数据"],"children":[{"name":["客户属性"],"children":[{"name":["会员档案"],"children":[{"name":["会员档次"],"size":[0.4556]},{"name":["会员年限"],"size":[0.8469]}]},{"name":["基本属性"],"children":[{"name":["联系地址"],"size":[0.3466]},{"name":["年龄"],"size":[0.2969]},{"name":["生日"],"size":[0.7581]},{"name":["性别"],"size":[0.519]},{"name":["姓名"],"size":[0.3823]},{"name":["证件"],"size":[0.6576]}]},{"name":["入住情况"],"children":[{"name":["房间偏好"],"size":[0.0922]},{"name":["入住次数"],"size":[0.6213]},{"name":["入住频率"],"size":[0.9018]},{"name":["入住时间偏好"],"size":[0.8821]},{"name":["入住习惯"],"size":[0.9493]}]}]},{"name":["搜索数据"],"children":[{"name":["搜索地区"],"children":[{"name":["二线城市"],"size":[0.2949]},{"name":["三线一下城市"],"size":[0.1832]},{"name":["一线城市"],"size":[0.6239]}]},{"name":["搜索来源"],"children":[{"name":["官网"],"size":[0.8326]},{"name":["旅游App"],"size":[0.6032]},{"name":["旅游网站"],"size":[0.7687]},{"name":["微信"],"size":[0.8465]}]},{"name":["搜索偏好"],"children":[{"name":["搜索内容偏好"],"size":[0.1143]},{"name":["搜索频率"],"size":[0.1799]},{"name":["搜索时长"],"size":[0.4036]}]}]},{"name":["消费数据"],"children":[{"name":["额外消费"],"children":[{"name":["餐饮消费情况"],"children":[{"name":["餐饮类型"],"size":[0.205]},{"name":["消费金额划分"],"size":[0.592]},{"name":["消费频率划分"],"size":[0.5832]}]},{"name":["健身消费情况"],"children":[{"name":["健身类型"],"size":[0.1435]},{"name":["消费金额划分"],"size":[0.7292]},{"name":["消费频率划分"],"size":[0.3536]},{"name":["健身时长"],"size":[0.4194]}]},{"name":["休闲消费情况"],"children":[{"name":["休闲类型"],"size":[0.5881]},{"name":["消费金额划分"],"size":[0.1124]},{"name":["消费频率划分"],"size":[0.537]}]}]},{"name":["基本消费"],"children":[{"name":["消费房型划分"],"size":[0.9198]},{"name":["消费金额划分"],"size":[0.1597]},{"name":["消费频率划分"],"size":[0.0088]},{"name":["消费平均水平划分"],"size":[0.2679]}]}]},{"name":["营销活动数据"],"children":[{"name":["线上"],"children":[{"name":["电子邮件"],"size":[0.1579]},{"name":["付费搜索"],"size":[0.7055]},{"name":["社交媒体"],"size":[0.8639]},{"name":["展示"],"size":[0.7036]},{"name":["自然搜索"],"children":[{"name":["参加各种营销活动的参与次数"],"size":[0.3459]},{"name":["响应次数"],"size":[0.1914]},{"name":["订购转化次数"],"size":[0.5628]}]}]},{"name":["线下"],"children":[{"name":["电话"],"size":[0.4934]},{"name":["短信"],"size":[0.3479]}]}]}]},{"name":["运营商数据"],"children":[{"name":["电信属性"],"children":[{"name":["订购属性"],"children":[{"name":["各种个人产品"],"size":[0.463]},{"name":["集团产品的订购标识"],"size":[0.4383]},{"name":["家庭产品"],"size":[0.1328]}]},{"name":["行为属性"],"children":[{"name":["数据业务行为"],"children":[{"name":["各种数据业务的登录"],"size":[0.3523]},{"name":["访问"],"size":[0.1966]},{"name":["下载"],"size":[0.4622]},{"name":["评论"],"size":[0.5951]},{"name":["分享等行为的次数"],"size":[0.2525]},{"name":["分享等行为的时长"],"size":[0.5657]}]},{"name":["语音业务行为"],"children":[{"name":["包括本地通话"],"size":[0.83]},{"name":["漫游通话"],"size":[0.5868]},{"name":["长途通话"],"size":[0.1862]},{"name":["行业拨打等行为的次数"],"size":[0.9186]},{"name":["时长"],"size":[0.2974]}]}]},{"name":["接触属性"],"children":[{"name":["服务接触"],"children":[{"name":["包括实体渠道电子渠道的服务类型"],"size":[0.0366]},{"name":["服务次数"],"size":[0.5857]},{"name":["各种服务类型的偏好度"],"size":[0.9867]}]},{"name":["营销接触"],"children":[{"name":["参加各种营销活动的参与次数"],"size":[0.8511]},{"name":["响应次数"],"size":[0.704]},{"name":["订购转化次数"],"size":[0.1996]}]}]},{"name":["消费属性"],"children":[{"name":["积分消费行为"],"size":[0.3175]},{"name":["敏感度"],"size":[0.8531]},{"name":["用户消费倾向"],"size":[0.7247]},{"name":["账单中各项业务或产品的消费费用"],"size":[0.1118]}]},{"name":["账户属性"],"children":[{"name":["3G用户标识"],"size":[0.5117]},{"name":["当前余额"],"size":[0.3456]},{"name":["付费方式"],"size":[0.2957]},{"name":["入网渠道"],"size":[0.2267]},{"name":["双卡用户标识"],"size":[0.0226]},{"name":["用户稳定度评分"],"size":[0.0681]},{"name":["在网时长"],"size":[0.608]}]},{"name":["终端属性"],"children":[{"name":["屏幕分辨率"],"size":[0.7788]},{"name":["上次换机时间"],"size":[0.276]},{"name":["是否支持WLAN"],"size":[0.6777]},{"name":["在网时长"],"size":[0.1397]},{"name":["终端价位"],"size":[0.2673]},{"name":["终端类型"],"size":[0.7626]},{"name":["终端品牌"],"size":[0.0499]}]}]},{"name":["互联网属性"],"children":[{"name":["行为属性搜索"],"children":[{"name":["使用搜索引擎的次数"],"size":[0.2849]},{"name":["搜索关键字"],"size":[0.7405]},{"name":["搜索内容类型偏好"],"size":[0.2359]},{"name":["引擎偏好"],"size":[0.6591]}]},{"name":["流量使用属性"],"children":[{"name":["2G流量"],"size":[0.574]},{"name":["计费流量"],"size":[0.7366]},{"name":["上行下行总流量…"],"size":[0.0942]},{"name":["生活区流量使用占比"],"size":[0.1943]},{"name":["网页浏览流量占比"],"size":[0.9791]},{"name":["闲时流量占比"],"size":[0.2789]},{"name":["总流量"],"size":[0.6014]}]},{"name":["内容访问属性"],"children":[{"name":["各互联网内容的访问次数"],"size":[0.3003]},{"name":["流量"],"size":[0.5784]},{"name":["内容偏好度"],"size":[0.1545]}]},{"name":["应用使用属性"],"children":[{"name":["APP类型偏好度"],"size":[0.4453]},{"name":["各类APP应用的使用次数"],"size":[0.5525]},{"name":["流量"],"size":[0.7804]},{"name":["使用时段"],"size":[0.2097]}]}]},{"name":["社会属性"],"children":[{"name":["集团属性"],"children":[{"name":["关键人物类型"],"size":[0.9958]},{"name":["集团编码"],"size":[0.6174]},{"name":["集团类型"],"size":[0.0172]},{"name":["集团用户经理"],"size":[0.9927]}]},{"name":["家庭属性"],"children":[{"name":["户主标识"],"size":[0.5504]},{"name":["开通家庭账户标识"],"size":[0.1456]},{"name":["所属家庭入网时间"],"size":[0.3623]},{"name":["用户所属家庭社区经理"],"size":[0.0868]}]},{"name":["身份属性"],"children":[{"name":["黑名单标识"],"size":[0.5752]},{"name":["红名单标识"],"size":[0.8847]},{"name":["内部用户标识"],"size":[0.1516]},{"name":["用户类型"],"size":[0.7186]}]},{"name":["校园属性"],"children":[{"name":["入学年份"],"size":[0.893]},{"name":["学生影响力编码"],"size":[0.8356]},{"name":["学校标识"],"size":[0.0067]},{"name":["在校职务"],"size":[0.6215]}]}]},{"name":["自然属性"],"children":[{"name":["基本属性"],"children":[{"name":["联系地址"],"size":[0.7848]},{"name":["年龄"],"size":[0.1567]},{"name":["生日"],"size":[0.787]},{"name":["性别"],"size":[0.8058]},{"name":["姓名"],"size":[0.795]},{"name":["证件"],"size":[0.784]}]},{"name":["交往属性"],"children":[{"name":["短信交往圈成员数"],"size":[0.0783]},{"name":["飞信联系人个数"],"size":[0.3704]},{"name":["语音交往圈个数"],"size":[0.4196]},{"name":["语音交往圈核心客户标识"],"size":[0.5348]}]},{"name":["位置属性"],"children":[{"name":["频繁开关机小区"],"size":[0.911]},{"name":["日均小区切换次数"],"size":[0.4256]},{"name":["生活轨迹类型"],"size":[0.2094]},{"name":["玩休闲活动片区"],"size":[0.2124]},{"name":["早高峰活动片区"],"size":[0.1703]}]}]}]}]};
+  root = flare;
+  root.x0 = height / 5;
+  root.y0 = 0;
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d._children.forEach(collapse);
+      d.children = null;
+    }
+  }
+  root.children.forEach(collapse);
+  update(root);
+d3.select(self.frameElement).style("height", "400px");
+function update(source) {
+  // Compute the new tree layout.
+  var nodes = tree.nodes(root).reverse(),
+      links = tree.links(nodes);
+  // Normalize for fixed-depth.
+  nodes.forEach(function(d) { d.y = d.depth * 100; });
+  // Update the nodes…
+  var node = svg.selectAll("g.node")
+      .data(nodes, function(d) { return d.id || (d.id = ++i); });
+  // Enter any new nodes at the parent's previous position.
+  var nodeEnter = node.enter().append("g")
+      .attr("class", "node")
+      .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+      .on("click", click);
+  nodeEnter.append("circle")
+      .attr("r", 1e-6)
+      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+  nodeEnter.append("text")
+      .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+      .attr("dy", ".35em")
+      .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+      .text(function(d) { return d.name; })
+      .style("fill-opacity", 1e-6);
+  // Transition nodes to their new position.
+  var nodeUpdate = node.transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+  nodeUpdate.select("circle")
+      .attr("r", 4.5)
+      .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+  nodeUpdate.select("text")
+      .style("fill-opacity", 1);
+  // Transition exiting nodes to the parent's new position.
+  var nodeExit = node.exit().transition()
+      .duration(duration)
+      .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+      .remove();
+  nodeExit.select("circle")
+      .attr("r", 1e-6);
+  nodeExit.select("text")
+      .style("fill-opacity", 1e-6);
+  // Update the links…
+  var link = svg.selectAll("path.link")
+      .data(links, function(d) { return d.target.id; });
+  // Enter any new links at the parent's previous position.
+  link.enter().insert("path", "g")
+      .attr("class", "link")
+      .attr("d", function(d) {
+        var o = {x: source.x0, y: source.y0};
+        return diagonal({source: o, target: o});
+      });
+  // Transition links to their new position.
+  link.transition()
+      .duration(duration)
+      .attr("d", diagonal);
+  // Transition exiting nodes to the parent's new position.
+  link.exit().transition()
+      .duration(duration)
+      .attr("d", function(d) {
+        var o = {x: source.x, y: source.y};
+        return diagonal({source: o, target: o});
+      })
+      .remove();
+  // Stash the old positions for transition.
+  nodes.forEach(function(d) {
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+}
+// Toggle children on click.
+function click(d) {
+  if (d.children) {
+    d._children = d.children;
+    d.children = null;
+  } else {
+    d.children = d._children;
+    d._children = null;
+  }
+  update(d);
+}
+</script>
